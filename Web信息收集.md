@@ -1,0 +1,294 @@
+
+
+
+
+
+
+目录
+
+
+
+[TOC]
+
+
+
+
+
+## Web信息收集思路
+
+```
+1.域名信息收集
+2.子域名信息收集
+3.站点信息收集
+4.敏感信息收集
+5.服务器信息收集
+6.端口信息收集
+7.真实IP地址识别
+8.社会工程学
+```
+
+
+
+## 0x01.收集方法：
+
+- 企查查/天眼查等
+- 备案信息
+- 域名whois反查
+
+主要关注下面信息
+
+- 企业组织架构
+- 子公司
+- 投资公司（可能会有交互业务系统）
+- 供应链（供应链入侵）
+- app
+
+
+
+收集内容
+
+域名、子域名、公网IP、端口号/服务、IP服务商
+
+## 0x02.主域收集
+
+```html
+1.Whois站长之家查询：http://whois.chinaz.com/
+
+2.阿里云中国万网查询：https://whois.aliyun.com/
+
+3.Whois Lookup 查找目标网站所有者的信息：http://whois.domaintools.com/
+
+4.Netcraft Site Report 显示目标网站上使用的技术：http://toolbar.netcraft.com/site_report?url=
+
+5.Robtex DNS 查询显示关于目标网站的全面的DNS信息：https://www.robtex.com/
+
+6.全球Whois查询：https://www.whois365.com/cn/
+
+7.站长工具爱站查询：https://whois.aizhan.com/
+```
+
+
+
+## 0x03.子域收集
+
+那子域其实代表的就是具体的业务系统了，这里我个人理解，主要是dns解析记录了
+
+- dns查询记录（MX,NS,SOA,TXT,SRV）
+- dns解析数据集（各种平台api，如rapid7）
+- 威胁情报平台（也是dns解析记录）
+- 搜索引擎（有些不会收录，比如api服务）
+- 备案信息
+- 证书
+- 子域爆破
+
+
+
+## 0x04.IP收集
+
+
+
+### 1.判断是否为CDN
+
+一.使用各种多地 ping 的服务，查看对应 IP 地址是否唯一，如果不唯一多半是使用了CDN， 多地 Ping 网站有：
+
+```
+站长工具 :https://ping.chinaz.com/
+超级ping检测：https://ping.aizhan.com/
+
+```
+
+二.使用 windows自带的nslookup 进行检测，原理同上，如果返回[域名解析](https://so.csdn.net/so/search?q=域名解析&spm=1001.2101.3001.7020)对应多个 IP 地址多半是使用了 CDN。有 CDN 的示例：
+
+
+
+```
+www.163.com
+服务器: public1.114dns.com
+Address: 114.114.114.114
+
+非权威应答:
+名称: 163.xdwscache.ourglb0.com
+Addresses: 58.223.164.86
+
+125.75.32.252
+Aliases: www.163.com
+
+www.163.com.xdns.com
+```
+
+无 CDN 的示例：
+
+```
+xiaix.me
+服务器: public1.114dns.com
+Address: 114.114.114.114
+
+非权威应答:
+名称: xiaix.me
+Address: 192.3.168.172
+```
+
+
+
+
+
+
+
+### 2.绕过CDN
+
+绕过CDN寻找真实IP的8种方法
+
+```
+
+一、DNS历史解析记录
+二、查找子域名
+三、网站邮件头信息
+四、网络空间安全引擎搜索
+五、利用SSL证书寻找真实IP.
+六、国外主机解析域名
+七、扫描全网
+八、配置不当导致绕过
+```
+
+**一、DNS历史解析记录**
+
+查询域名的历史解析记录，可能会找到网站使用CDN前的解析记录，从而获取真实ip，相关查询的网站有：
+
+```javascript
+iphistory：https://viewdns.info/iphistory/
+DNS查询：（https://dnsdb.io/zh-cn/）
+微步在线：（https://x.threatbook.cn/）
+域名查询：（https://site.ip138.com/）
+DNS历史查询：（https://securitytrails.com/）
+Netcraft：https://sitereport.netcraft.com/?url=github.com
+```
+
+**二、查找子域名**
+
+很多时候，一些重要的站点会做CDN，而一些子域名站点并没有加入CDN，而且跟主站在同一个C段内，这时候，就可以通过查找子域名来查找网站的真实IP。
+
+常用的子域名查找方法和工具：
+
+1、搜索引擎查询：如Google、baidu、Bing等传统搜索引擎，site:baidu.com inurl:baidu.com，搜target.com|公司名字。
+
+2、一些在线查询工具，如：
+
+```javascript
+http://tool.chinaz.com/subdomain/
+http://i.links.cn/subdomain/    
+http://subdomain.chaxun.la/
+http://searchdns.netcraft.com/
+https://www.virustotal.com/
+```
+
+
+
+3、 子域名爆破工具
+
+```javascript
+Layer子域名挖掘机
+wydomain：https://github.com/ring04h/wydomain    
+subDomainsBrute:https://github.com/lijiejie/
+Sublist3r:https://github.com/aboul3la/Sublist3r
+SubdomainBrute项目地址 https://github.com/lijiejie/subDomainsBrute 
+```
+
+**三、网站邮件头信息**
+
+比如说，邮箱注册，邮箱找回密码、RSS邮件订阅等功能场景，通过网站给自己发送邮件，从而让目标主动暴露他们的真实的IP，查看邮件头信息，获取到网站的真实IP。
+
+ 
+
+**四、网络空间安全引擎搜索**
+
+通过关键字或网站域名，就可以找出被收录的IP，很多时候获取到的就是网站的真实IP。
+
+```javascript
+钟馗之眼：https://www.zoomeye.org
+Shodan：https://www.shodan.io
+Fofa：https://fofa.so
+```
+
+**五、利用**[**SSL证书**](https://cloud.tencent.com/product/ssl?from=10680)**寻找真实IP**
+
+证书颁发机构(CA)必须将他们发布的每个SSL/TLS证书发布到公共日志中，SSL/TLS证书通常包含域名、子域名和电子邮件地址。因此SSL/TLS证书成为了攻击者的切入点。
+
+SSL证书搜索引擎：
+
+```javascript
+https://censys.io/ipv4?q=github.comCensys 证书搜索：
+```
+
+
+
+**六、国外主机解析域名**
+
+大部分 CDN 厂商因为各种原因只做了国内的线路，而针对国外的线路可能几乎没有，此时我们使用国外的DNS查询，很可能获取到真实IP。
+
+国外多PING测试工具：
+
+```javascript
+https://asm.ca.com/zh_cn/ping.php
+http://host-tracker.com/
+http://www.webpagetest.org/
+https://dnscheck.pingdom.com/
+```
+
+
+
+
+
+![image-20221201203101982](C:\Users\Old Green\AppData\Roaming\Typora\typora-user-images\image-20221201203101982.png)
+
+
+
+**七、扫描全网**
+
+通过Zmap、masscan等工具对整个互联网发起扫描，针对扫描结果进行关键字查找，获取网站真实IP。
+
+1、ZMap号称是最快的互联网扫描工具，能够在45分钟扫遍全网。
+
+```javascript
+https://github.com/zmap/zmap
+```
+
+复制
+
+2、Masscan号称是最快的互联网端口扫描器，最快可以在六分钟内扫遍互联网。
+
+```javascript
+https://github.com/robertdavidgraham/masscan
+```
+
+复制
+
+**八、配置不当导致绕过**
+
+在配置CDN的时候，需要指定域名、端口等信息，有时候小小的配置细节就容易导致CDN防护被绕过。
+
+案例1：为了方便用户访问，我们常常将`www.test.com` 和 `test.com` 解析到同一个站点，而CDN只配置了www.test.com，通过访问test.com，就可以绕过 CDN 了。
+
+案例2：站点同时支持http和https访问，CDN只配置 https协议，那么这时访问http就可以轻易绕过
+
+
+
+## 0x05.社工利用信息收集
+
+电话、邮箱、微博、微信号、qq啥的
+
+- 企业信息-人员信息
+- github
+- 招聘信息
+- 客服
+
+
+
+
+
+
+
+该文章仅为互联网上东拼西凑的资料，并不是本人原创，仅为方便平时工作学习，如有侵权请联系删除
+
+参考：https://www.freebuf.com/articles/web/251083.html
+
+https://cloud.tencent.com/developer/article/1634648
