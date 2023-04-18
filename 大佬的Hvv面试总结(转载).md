@@ -1,6 +1,6 @@
 
 
-本人自己没时间写总结博客，所以窃取大佬的hvv总结博客:https://www.cnblogs.com/Rlins/p/16873560.html  (狗头)
+窃取资料来自于:https://www.cnblogs.com/Rlins/p/16873560.html  (狗头)
 
 
 
