@@ -48,17 +48,18 @@ dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true
 有许多第三方工具和库，如BoxedApp Packer，可以将您的EXE和所有的DLL打包成一个单一的EXE文件。.
 注意事项：
 当合并或嵌入程序集时，可能会遇到一些问题，例如反射可能不工作，因为它预期程序集存在于文件系统上。
-
+打包或嵌入程序集可能会增加启动时间，因为程序必须从内存中提取和加载这些程序集。
+总是在发布前测试合并后的应用程序，以确保没有遗漏的依赖项或其他潜在问题。
+选择哪种方法取决于您的具体需求和所使用的.NET版本。
 ## 4.C# 生成程序目录避免生成多余的XML和pdb：
 
 1：用记事本打开你C#项目工程下的.csproj 文件
 2：搜索找到你的生成类型一行：比如我用的是'Release|x64'生成程序
 <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
 3：在此行下添加以下代码，即可以屏蔽随dll一起的xml和pdb文件在Release中生成
+```
 <AllowedReferenceRelatedFileExtensions>.allowedextension</AllowedReferenceRelatedFileExtensions>
+```
 
 
 
-打包或嵌入程序集可能会增加启动时间，因为程序必须从内存中提取和加载这些程序集。
-总是在发布前测试合并后的应用程序，以确保没有遗漏的依赖项或其他潜在问题。
-选择哪种方法取决于您的具体需求和所使用的.NET版本。
