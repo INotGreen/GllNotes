@@ -121,3 +121,23 @@
    ```
 
    如果这个命令找到了任何 GitLab 相关的文件或目录，请手动检查和删除它们。
+
+
+
+## 3.设置密码
+
+如果在这个过程中遇到了问题，例如忘记了您设置的密码，您可以通过服务器上的 GitLab 控制台来重置 `root` 用户的密码。这可以通过运行以下命令完成：
+
+```bash
+sudo gitlab-rails console -e production
+```
+
+然后在出现的 Ruby on Rails 控制台中，执行以下命令来更改密码：
+
+```bash
+user = User.find_by(username: 'root')
+user.password = 'yournewpassword'
+user.password_confirmation = 'yournewpassword'
+user.save!
+exit
+```
