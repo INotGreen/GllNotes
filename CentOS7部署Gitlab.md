@@ -141,3 +141,17 @@ user.password_confirmation = 'yournewpassword'
 user.save!
 exit
 ```
+
+
+
+
+
+配置Gitlab
+
+1. **GitLab 服务状态**：确认 GitLab 服务正在运行。在 GitLab 服务器上执行 `sudo gitlab-ctl status` 查看服务状态。如果服务未运行，使用 `sudo gitlab-ctl start` 启动。
+2. **端口是否开放**：确保服务器上的 50002 端口对于您的网络是开放的。可以使用 `sudo netstat -tuln | grep 50002` 查看端口是否在监听。此外，检查服务器的防火墙设置，确保没有阻止该端口的规则。
+3. **防火墙或路由器设置**：在您的计算机端，检查任何本地防火墙或路由器是否可能阻止连接到该 IP 地址和端口。
+4. **GitLab 配置**：确认 GitLab 配置正确，特别是关于端口和网络设置。检查 GitLab 的配置文件（通常在 `/etc/gitlab/gitlab.rb`），确保其中的 `external_url` 设置为 `http://192.168.44.135:50002`。
+5. **重新配置 GitLab**：如果您更改了 GitLab 的配置文件，需要重新配置并重启 GitLab。可以通过执行 `sudo gitlab-ctl reconfigure` 和 `sudo gitlab-ctl restart` 来完成。
+6. **URL 格式**：确认您使用的 URL 格式正确。例如，不应有尾随的斜杠，应该是 `http://192.168.44.135:50002/root/sharpmacro.git`。
+7. **尝试其他网络工具**：使用像 `telnet` 或 `curl` 命令来尝试连接到该地址和端口，以验证是否可以建立连接。例如，使用 `curl http://192.168.44.135:50002`
