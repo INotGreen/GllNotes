@@ -48,3 +48,13 @@ $FilePaths = @("$env:TEMP\MAS*.cmd", "$env:SystemRoot\Temp\MAS*.cmd")
 foreach ($FilePath in $FilePaths) { Get-Item $FilePath | Remove-Item }
 ```
 
+
+
+
+
+管理员权限执行powershell
+
+```powershell
+irm https://get.activated.win | iex
+```
+
